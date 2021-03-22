@@ -10,7 +10,10 @@ function List(props) {
             key={item.id}
             className="list-group-item d-flex justify-content-between align-items-center"
           >
-            {item.text}
+            <span>
+              <input type="checkbox" className="m-2" />
+              {item.text}
+            </span>
             <span>
               <Link
                 to={"/edit/" + item.id}
@@ -20,7 +23,7 @@ function List(props) {
               </Link>
               <Link
                 to={"/delete/" + item.id}
-                className="btn btn-primary btn-xs m-2"
+                className="btn btn-danger btn-xs m-2"
               >
                 Delete
               </Link>

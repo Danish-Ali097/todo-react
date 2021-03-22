@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, withRouter } from "react-router-dom";
 import './App.css';
 import List from './components/list';
 import NavBar from './components/navbar';
@@ -21,7 +21,7 @@ class App extends Component {
       let items = this.state.items;
       let id = this.state.id;
       id++;
-      items.push({id:id,text:value});
+      items.push({ id: id, text: value, isCompleted: false });
 
       this.setState({id,items});
     }
@@ -29,10 +29,22 @@ class App extends Component {
 
   handleDelete = (id) =>{
     console.log('App - delete', id);
+    let items = this.state.items;
+    items = items.filter(x => x.id !== Number.parseInt(id));
+    this.setState({items:items});
+    
+    this.props.history.push('/');
   }
 
-  handleEdit = (item) =>{
+  handleEdit = (e, item) =>{
     console.log('App - item', item);
+    let items = this.state.items;
+    let index = items.findIndex( i=> i.id === item.id);
+    items[index] = item;
+    this.setState({items:items});
+    e.preventDefault();
+    
+    this.props.history.push('/');
   }
 
   render(){
@@ -62,4 +74,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default withRouter(App);
