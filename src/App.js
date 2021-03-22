@@ -1,11 +1,21 @@
 import React, {Component} from 'react';
-import { BrowserRouter as Router, Switch, Route, withRouter } from "react-router-dom";
+import { Switch, Route, withRouter } from "react-router-dom";
 import './App.css';
 import List from './components/list';
 import NavBar from './components/navbar';
 import Input from './components/input';
 import Edit from './components/edit';
 import Delete from './components/delete';
+
+import { alert, success, info, defaultModules } from '@pnotify/core';
+import '@pnotify/bootstrap4/dist/PNotifyBootstrap4.css';
+import '@pnotify/core/dist/PNotify.css';
+import * as PNotifyMobile from '@pnotify/mobile';
+import * as PNotifyBootstrap4 from '@pnotify/bootstrap4';
+import '@pnotify/mobile/dist/PNotifyMobile.css';
+ 
+defaultModules.set(PNotifyMobile, {});
+defaultModules.set(PNotifyBootstrap4, {});
 
 
 class App extends Component {
@@ -24,6 +34,12 @@ class App extends Component {
       items.push({ id: id, text: value, isCompleted: false });
 
       this.setState({id,items});
+
+      alert({
+        text: 'TODO:: Item Added',
+        delay: 1000
+      });
+
     }
   }
 
@@ -32,8 +48,13 @@ class App extends Component {
     let items = this.state.items;
     items = items.filter(x => x.id !== Number.parseInt(id));
     this.setState({items:items});
-    
+
     this.props.history.push('/');
+
+    success({
+      text: 'TODO:: Item Deleted',
+      delay: 1000
+    });
   }
 
   handleEdit = (e, item) =>{
@@ -45,6 +66,29 @@ class App extends Component {
     e.preventDefault();
     
     this.props.history.push('/');
+    success({
+      text: 'TODO:: Item Updated',
+      delay: 1000
+    });
+  }
+
+  handleComplete = (id) => {let items = this.state.items;
+    let message ='';
+    let index = items.findIndex( i=> i.id === id);
+    items[index].isCompleted = (!items[index].isCompleted);
+    this.setState({items:items});
+    if(items[index].isCompleted)
+    {
+      message = 'TODO:: Item marked Complete';
+    }
+    else
+    {
+      message = 'TODO:: Item marked Pending';
+    }
+    info({
+      text: message,
+      delay: 1000
+    });
   }
 
   render(){
@@ -52,12 +96,10 @@ class App extends Component {
       <React.Fragment>
         <NavBar/>
         <div className="container">
-          <Router>
-          
-            <Switch>
+          <Switch>
               <Route path="/" exact>
                 <Input onSubmit = {this.onHandleSubmit}/>
-                <List items={this.state.items}/>
+                <List onComplete = {this.handleComplete} items={this.state.items}/>
               </Route>
               <Route path="/edit/:id" exact>
                 <Edit onEdit = {this.handleEdit} items={this.state.items}/>
@@ -66,8 +108,6 @@ class App extends Component {
                 <Delete onDelete = {this.handleDelete}/>
               </Route>
             </Switch>
-          
-          </Router>
         </div>
       </React.Fragment>
     );

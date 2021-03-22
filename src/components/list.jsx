@@ -11,7 +11,12 @@ function List(props) {
             className="list-group-item d-flex justify-content-between align-items-center"
           >
             <span>
-              <input type="checkbox" className="m-2" />
+              <input
+                type="checkbox"
+                className="m-2"
+                checked={item.isCompleted}
+                onChange={() => props.onComplete(item.id)}
+              />
               {item.text}
             </span>
             <span>
